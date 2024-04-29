@@ -1,0 +1,20 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: mi.rumyantsev.2020@gmail.com
+    name: Mikhail Rumyantsev
+  description: A system for storing blocks of text and conveniently sharing these
+    blocks via a link.
+  license:
+    name: MIT License
+    url: https://opensource.org/license/mit
+  title: Pastebin API
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
