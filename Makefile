@@ -1,11 +1,9 @@
 .SILENT:
-.DEFAULT_GOAL: run-fast
+.DEFAULT_GOAL := run-fast
 
 include ./.env
 
-export ENABLE_DEBUG_LOGS
-export ENABLE_HTTP_SERVER_DEBUG_MODE
-export HTTP_SERVER_LISTEN_IP
+export HTTP_SERVER_LISTEN_IP_ADDRESS
 export HTTP_SERVER_LISTEN_PORT
 
 export DB_PASSWORD
@@ -15,6 +13,8 @@ export DB_USERNAME
 export DB_DRIVER
 export DB_DATABASE
 export DB_SSLMODE
+
+export PASSWORD_HASH_SALT
 
 .PHONY: build
 build:

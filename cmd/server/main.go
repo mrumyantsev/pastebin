@@ -18,15 +18,15 @@ func init() {
 	log.Logger = log.Output(conWrt)
 }
 
-// @title           Pastebin API
-// @version         1.0
-// @description     A system for storing blocks of text and conveniently sharing these blocks via a link.
+// @title          Pastebin API
+// @version        1.0
+// @description    A system for storing blocks of text and conveniently sharing these blocks via links.
 
 // @contact.name   Mikhail Rumyantsev
 // @contact.email  mi.rumyantsev.2020@gmail.com
 
-// @license.name  MIT License
-// @license.url   https://opensource.org/license/mit
+// @license.name   MIT License
+// @license.url    https://opensource.org/license/mit
 
 // @host      localhost:8080
 // @BasePath  /
@@ -35,6 +35,8 @@ func init() {
 // @in header
 // @name Authorization
 func main() {
+	log.Info().Msg("service started")
+
 	app, err := server.New()
 	if err != nil {
 		log.Fatal().Err(err).Msg("could not initialize application")
@@ -43,4 +45,6 @@ func main() {
 	if err = app.Run(); err != nil {
 		log.Fatal().Err(err).Msg("could not run application")
 	}
+
+	log.Info().Msg("service stopped")
 }
