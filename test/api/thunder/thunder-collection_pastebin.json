@@ -1,0 +1,115 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "pastebin",
+    "dateExported": "2024-05-19T10:24:37.502Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "_id": "b53917cc-9514-4ab2-8be8-1d56bc48f7a5",
+            "name": "users",
+            "containerId": "37784c4e-3fe2-4b8b-ba19-99c38f75afee",
+            "created": "2024-05-15T14:42:33.542Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "37784c4e-3fe2-4b8b-ba19-99c38f75afee",
+            "name": "v1",
+            "containerId": "",
+            "created": "2024-05-17T13:38:51.271Z",
+            "sortNum": 20000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "9c94298f-03ca-475f-a850-2bf207e8b672",
+            "colId": "f855d56f-0d5b-4eae-a4db-4ca5c9dad286",
+            "containerId": "b53917cc-9514-4ab2-8be8-1d56bc48f7a5",
+            "name": "Create User",
+            "url": "http://127.0.0.1:8080/v1/users",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-05-17T13:37:59.240Z",
+            "modified": "2024-05-18T16:54:25.535Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\": \"asd18\",\n  \"password\": \"asd\",\n  \"firstName\": \"asd\",\n  \"lastName\": \"asd\",\n  \"email\": \"asd1\"\n}\n",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "d414aa75-9ecc-4efc-83ed-cacbe6600d13",
+            "colId": "f855d56f-0d5b-4eae-a4db-4ca5c9dad286",
+            "containerId": "b53917cc-9514-4ab2-8be8-1d56bc48f7a5",
+            "name": "Get Users",
+            "url": "http://127.0.0.1:8080/v1/users?page=5&limit=7",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2024-05-17T16:33:28.758Z",
+            "modified": "2024-05-19T10:15:20.412Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "page",
+                    "value": "5",
+                    "isPath": false
+                },
+                {
+                    "name": "limit",
+                    "value": "7",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "b194fdf2-b463-497a-9990-4646a4b7ca1a",
+            "colId": "f855d56f-0d5b-4eae-a4db-4ca5c9dad286",
+            "containerId": "b53917cc-9514-4ab2-8be8-1d56bc48f7a5",
+            "name": "Get User",
+            "url": "http://127.0.0.1:8080/v1/users/4",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2024-05-18T10:44:37.581Z",
+            "modified": "2024-05-18T14:59:34.310Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "d7d79844-de66-4d80-bcd4-43b39e50135c",
+            "colId": "f855d56f-0d5b-4eae-a4db-4ca5c9dad286",
+            "containerId": "b53917cc-9514-4ab2-8be8-1d56bc48f7a5",
+            "name": "Update User",
+            "url": "http://127.0.0.1:8080/v1/users/1",
+            "method": "PATCH",
+            "sortNum": 50000,
+            "created": "2024-05-18T10:51:05.668Z",
+            "modified": "2024-05-18T15:15:14.581Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"a775\"\n}\n",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "d1016286-3185-451d-953f-460b5f6b55e3",
+            "colId": "f855d56f-0d5b-4eae-a4db-4ca5c9dad286",
+            "containerId": "b53917cc-9514-4ab2-8be8-1d56bc48f7a5",
+            "name": "Delete User",
+            "url": "http://127.0.0.1:8080/v1/users/1",
+            "method": "DELETE",
+            "sortNum": 60000,
+            "created": "2024-05-18T10:55:11.692Z",
+            "modified": "2024-05-18T10:55:33.456Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        }
+    ]
+}
