@@ -3,10 +3,16 @@ package database
 import (
 	"fmt"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/pressly/goose/v3"
+
 	"github.com/mrumyantsev/pastebin/pkg/lib/errlib"
+)
+
+const (
+	MigrationDir = "./migrations"
 )
 
 type Config struct {
@@ -48,7 +54,13 @@ func (d *Database) Connect() error {
 		return errlib.Wrap(err, "could not connect to database")
 	}
 
-	if err = d.Ping(); err != nil {
+	return nil
+}
+
+// CheckConnection checks the connection to database by calling Ping
+// method.
+func (d *Database) CheckConnection() error {
+	if err := d.Ping(); err != nil {
 		return errlib.Wrap(err, "could not check the connection to database")
 	}
 
@@ -59,6 +71,21 @@ func (d *Database) Connect() error {
 func (d *Database) Disconnect() error {
 	if err := d.Close(); err != nil {
 		return errlib.Wrap(err, "could not disconnect from database")
+	}
+
+	return nil
+}
+
+// Migrate performs upping of the migration schema to the connected
+// database, using goose migration tool.
+func (d *Database) Migrate() error {
+	err := goose.SetDialect(d.config.Driver)
+	if err != nil {
+		return errlib.Wrap(err, "could not select database dialect")
+	}
+
+	if err = goose.Up(d.DB.DB, MigrationDir); err != nil {
+		return errlib.Wrap(err, "could not up the migration schema")
 	}
 
 	return nil

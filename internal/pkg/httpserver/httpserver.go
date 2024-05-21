@@ -51,8 +51,6 @@ type Server struct {
 func New(cfg *Config) *Server {
 	cfg.init()
 
-	gin.SetMode(gin.ReleaseMode)
-
 	engine := gin.New()
 
 	server := &http.Server{

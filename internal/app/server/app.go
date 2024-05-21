@@ -81,11 +81,20 @@ func (a *App) Run() error {
 }
 
 func (a *App) connectToDb() error {
-	if err := a.database.Connect(); err != nil {
-		return errlib.Wrap(err, "could not connect to database")
+	err := a.database.Connect()
+	if err != nil {
+		return err
+	}
+
+	if err = a.database.CheckConnection(); err != nil {
+		return err
 	}
 
 	log.Debug().Msg("database connected")
+
+	if err = a.database.Migrate(); err != nil {
+		return err
+	}
 
 	return nil
 }

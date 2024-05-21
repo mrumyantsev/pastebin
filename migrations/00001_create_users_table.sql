@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE TABLE users
 (
 	id            SERIAL       NOT NULL UNIQUE,
@@ -32,4 +33,7 @@ VALUES
 ('asd18', '1234', 'fn', 'ln', 'e17@mail.com', '2024-05-19T12:25:11'),
 ('asd19', '1234', 'fn', 'ln', 'e18@mail.com', '2024-05-19T12:25:11'),
 ('asd20', '1234', 'fn', 'ln', 'e19@mail.com', '2024-05-19T12:25:11'),
-('asd21', '1234', 'fn', 'ln', 'e20@mail.com', '2024-05-19T12:25:11')
+('asd21', '1234', 'fn', 'ln', 'e20@mail.com', '2024-05-19T12:25:11');
+
+-- +goose Down
+DROP TABLE users;
