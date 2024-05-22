@@ -29,12 +29,13 @@ func (e *UserV1HttpEndpoint) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	if err = e.userUseCase.CreateUser(input); err != nil {
+	output, err := e.userUseCase.CreateUser(input)
+	if err != nil {
 		response.Fail(ctx, err, core.ErrCreateUser)
 		return
 	}
 
-	response.Success(ctx, core.MsgCreated)
+	response.Object(ctx, output, core.MsgUserCreated)
 }
 
 func (e *UserV1HttpEndpoint) GetUsers(ctx *gin.Context) {
@@ -46,7 +47,7 @@ func (e *UserV1HttpEndpoint) GetUsers(ctx *gin.Context) {
 		return
 	}
 
-	response.Object(ctx, core.MsgGet, users)
+	response.Object(ctx, users, core.MsgUsersGot)
 }
 
 func (e *UserV1HttpEndpoint) GetUser(ctx *gin.Context) {
@@ -62,7 +63,7 @@ func (e *UserV1HttpEndpoint) GetUser(ctx *gin.Context) {
 		return
 	}
 
-	response.Object(ctx, core.MsgGet, usr)
+	response.Object(ctx, usr, core.MsgUserGot)
 }
 
 func (e *UserV1HttpEndpoint) UpdateUser(ctx *gin.Context) {
@@ -84,7 +85,7 @@ func (e *UserV1HttpEndpoint) UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	response.Success(ctx, core.MsgUpdated)
+	response.Success(ctx, core.MsgUserUpdated)
 }
 
 func (e *UserV1HttpEndpoint) DeleteUser(ctx *gin.Context) {
@@ -99,5 +100,39 @@ func (e *UserV1HttpEndpoint) DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	response.Success(ctx, core.MsgDeleted)
+	response.Success(ctx, core.MsgUserDeleted)
+}
+
+func (e *UserV1HttpEndpoint) IsUserExists(ctx *gin.Context) {
+	username := ctx.Param(user.ColUsername)
+
+	output, err := e.userUseCase.IsUserExists(username)
+	if err != nil {
+		response.Fail(ctx, err, core.ErrCheckUserExistance)
+		return
+	}
+
+	response.Object(ctx, output, core.MsgUserExistanceChecked)
+}
+
+func (e *UserV1HttpEndpoint) IsEmailExists(ctx *gin.Context) {
+	email := ctx.Param(user.ColEmail)
+
+	output, err := e.userUseCase.IsEmailExists(email)
+	if err != nil {
+		response.Fail(ctx, err, core.ErrCheckEmailExistance)
+		return
+	}
+
+	response.Object(ctx, output, core.MsgEmailExistanceChecked)
+}
+
+func (e *UserV1HttpEndpoint) UserCount(ctx *gin.Context) {
+	output, err := e.userUseCase.UserCount()
+	if err != nil {
+		response.Fail(ctx, err, core.ErrGetUserCount)
+		return
+	}
+
+	response.Object(ctx, output, core.MsgUserCountGot)
 }

@@ -58,6 +58,30 @@ func NewUserOutput(
 	}
 }
 
+type IdOutput struct {
+	Id int `json:"id"`
+}
+
+func NewIdOutput(id int) IdOutput {
+	return IdOutput{Id: id}
+}
+
+type CountOutput struct {
+	Count int `json:"count"`
+}
+
+func NewCountOutput(count int) CountOutput {
+	return CountOutput{Count: count}
+}
+
+type IsExistsOutput struct {
+	IsExists bool `json:"isExists"`
+}
+
+func NewIsExistsOutput(cond bool) IsExistsOutput {
+	return IsExistsOutput{IsExists: cond}
+}
+
 type User struct {
 	Id           int       `db:"id"`
 	Username     string    `db:"username"`

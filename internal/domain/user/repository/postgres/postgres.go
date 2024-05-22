@@ -16,8 +16,11 @@ func NewUserPostgresRepository(db *database.Database) *UserPostgresRepository {
 	return &UserPostgresRepository{database: db}
 }
 
-func (r *UserPostgresRepository) CreateUser(usr user.User) error {
-	query := fmt.Sprintf("INSERT INTO %s (%s,%s,%s,%s,%s,%s) VALUES ($1,$2,$3,$4,$5,$6)",
+func (r *UserPostgresRepository) CreateUser(usr user.User) (int, error) {
+	query := fmt.Sprintf(
+		`INSERT INTO %s (%s,%s,%s,%s,%s,%s)
+VALUES ($1,$2,$3,$4,$5,$6)
+RETURNING %s`,
 		user.TabUsers,
 		user.ColUsername,
 		user.ColPasswordHash,
@@ -25,9 +28,10 @@ func (r *UserPostgresRepository) CreateUser(usr user.User) error {
 		user.ColLastName,
 		user.ColEmail,
 		user.ColCreatedAt,
+		user.ColId,
 	)
 
-	_, err := r.database.Exec(
+	row := r.database.QueryRow(
 		query,
 		usr.Username,
 		usr.PasswordHash,
@@ -36,15 +40,20 @@ func (r *UserPostgresRepository) CreateUser(usr user.User) error {
 		usr.Email,
 		usr.CreatedAt,
 	)
+
+	var id int
+
+	err := row.Scan(&id)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return id, nil
 }
 
 func (r *UserPostgresRepository) GetUsers(pg core.Pagination) ([]user.User, error) {
-	query := fmt.Sprintf(`SELECT %s
+	query := fmt.Sprintf(
+		`SELECT %s
 FROM %s
 WHERE %s > (CASE WHEN %d > 0 THEN
 				(SELECT MAX(%s)
@@ -76,7 +85,8 @@ LIMIT %d`,
 func (r *UserPostgresRepository) GetUser(id int) (user.User, error) {
 	var usr user.User
 
-	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s = $1",
+	query := fmt.Sprintf(
+		"SELECT %s FROM %s WHERE %s = $1",
 		user.AllCols,
 		user.TabUsers,
 		user.ColId,
@@ -90,7 +100,8 @@ func (r *UserPostgresRepository) GetUser(id int) (user.User, error) {
 }
 
 func (r *UserPostgresRepository) UpdateUser(id int, usr user.User) error {
-	query := fmt.Sprintf(`UPDATE %s
+	query := fmt.Sprintf(
+		`UPDATE %s
 SET
 %s = CASE WHEN $1 = '' THEN %s ELSE $1 END,
 %s = CASE WHEN $2 = '' THEN %s ELSE $2 END,
@@ -124,7 +135,8 @@ WHERE %s = $6`,
 }
 
 func (r *UserPostgresRepository) DeleteUser(id int) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE %s = $1",
+	query := fmt.Sprintf(
+		"DELETE FROM %s WHERE %s = $1",
 		user.TabUsers,
 		user.ColId,
 	)
@@ -136,8 +148,9 @@ func (r *UserPostgresRepository) DeleteUser(id int) error {
 	return nil
 }
 
-func (r *UserPostgresRepository) IsUserExists(username string) (bool, error) {
-	query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE %s = $1",
+func (r *UserPostgresRepository) IsUserExistsByUsername(username string) (bool, error) {
+	query := fmt.Sprintf(
+		"SELECT COUNT(*) FROM %s WHERE %s = $1",
 		user.TabUsers,
 		user.ColUsername,
 	)
@@ -151,8 +164,25 @@ func (r *UserPostgresRepository) IsUserExists(username string) (bool, error) {
 	return cond, nil
 }
 
+func (r *UserPostgresRepository) IsUserExistsById(id int) (bool, error) {
+	query := fmt.Sprintf(
+		"SELECT COUNT(*) FROM %s WHERE %s = $1",
+		user.TabUsers,
+		user.ColId,
+	)
+
+	var cond bool
+
+	if err := r.database.Get(&cond, query, id); err != nil {
+		return false, err
+	}
+
+	return cond, nil
+}
+
 func (r *UserPostgresRepository) IsEmailExists(email string) (bool, error) {
-	query := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE %s = $1",
+	query := fmt.Sprintf(
+		"SELECT COUNT(*) FROM %s WHERE %s = $1",
 		user.TabUsers,
 		user.ColEmail,
 	)
@@ -164,4 +194,19 @@ func (r *UserPostgresRepository) IsEmailExists(email string) (bool, error) {
 	}
 
 	return cond, nil
+}
+
+func (r *UserPostgresRepository) UserCount() (int, error) {
+	query := fmt.Sprintf(
+		"SELECT COUNT(*) FROM %s",
+		user.TabUsers,
+	)
+
+	var count int
+
+	if err := r.database.Get(&count, query); err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

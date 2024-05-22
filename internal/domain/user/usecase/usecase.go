@@ -17,32 +17,38 @@ func NewUserUseCase(cfg *config.Config, userService user.UserService) *UserUseCa
 	return &UserUseCase{config: cfg, userService: userService}
 }
 
-func (u *UserUseCase) CreateUser(input user.UserInput) error {
-	if core.IsMissingInput(input.Username, input.Password, input.FirstName, input.LastName, input.Email) {
-		return errlib.NewCustomError(core.MsgInputMissing)
+func (u *UserUseCase) CreateUser(input user.UserInput) (user.IdOutput, error) {
+	var output user.IdOutput
+
+	if core.IsInputMissing(input.Username, input.Password, input.FirstName, input.LastName, input.Email) {
+		return output, errlib.NewCustomError(core.MsgInputMissing)
 	}
 
-	if core.IsInputLengthTooLong(user.MaxUsernameLength, input.Username) {
-		return errlib.NewCustomError(core.MsgInputExceeds)
+	if core.IsInputExceeds(user.MaxUsernameLength, input.Username) {
+		return output, errlib.NewCustomError(core.MsgInputExceeds)
 	}
 
-	if core.IsInputLengthTooLong(user.MaxInputLength, input.Password, input.FirstName, input.LastName, input.Email) {
-		return errlib.NewCustomError(core.MsgInputExceeds)
+	if core.IsInputExceeds(user.MaxInputLength, input.Password, input.FirstName, input.LastName, input.Email) {
+		return output, errlib.NewCustomError(core.MsgInputExceeds)
 	}
 
-	exists, err := u.userService.IsUserExists(input.Username)
+	if !core.IsEmailValid(input.Email) {
+		return output, errlib.NewCustomError(core.MsgEmailInvalid)
+	}
+
+	exists, err := u.userService.IsUserExistsByUsername(input.Username)
 	if err != nil {
-		return err
+		return output, err
 	}
 	if exists {
-		return errlib.NewCustomError(core.MsgExists)
+		return output, errlib.NewCustomError(core.MsgExists)
 	}
 
 	if exists, err = u.userService.IsEmailExists(input.Email); err != nil {
-		return err
+		return output, err
 	}
 	if exists {
-		return errlib.NewCustomError(core.MsgEmailExists)
+		return output, errlib.NewCustomError(core.MsgEmailExists)
 	}
 
 	usr := user.NewUser(
@@ -54,7 +60,14 @@ func (u *UserUseCase) CreateUser(input user.UserInput) error {
 		input.Email,
 	)
 
-	return u.userService.CreateUser(usr)
+	id, err := u.userService.CreateUser(usr)
+	if err != nil {
+		return output, err
+	}
+
+	output = user.NewIdOutput(id)
+
+	return output, nil
 }
 
 func (u *UserUseCase) GetUsers(pg core.Pagination) ([]user.UserOutput, error) {
@@ -85,6 +98,14 @@ func (u *UserUseCase) GetUsers(pg core.Pagination) ([]user.UserOutput, error) {
 func (u *UserUseCase) GetUser(id int) (user.UserOutput, error) {
 	var output user.UserOutput
 
+	exists, err := u.userService.IsUserExistsById(id)
+	if err != nil {
+		return output, err
+	}
+	if !exists {
+		return output, errlib.NewCustomError(core.MsgNotExists)
+	}
+
 	usr, err := u.userService.GetUser(id)
 	if err != nil {
 		return output, err
@@ -104,6 +125,14 @@ func (u *UserUseCase) GetUser(id int) (user.UserOutput, error) {
 }
 
 func (u *UserUseCase) UpdateUser(id int, input user.UserInput) error {
+	exists, err := u.userService.IsUserExistsById(id)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return errlib.NewCustomError(core.MsgNotExists)
+	}
+
 	usr := user.NewUser(
 		id,
 		input.Username,
@@ -121,9 +150,56 @@ func (u *UserUseCase) UpdateUser(id int, input user.UserInput) error {
 }
 
 func (u *UserUseCase) DeleteUser(id int) error {
+	exists, err := u.userService.IsUserExistsById(id)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return errlib.NewCustomError(core.MsgNotExists)
+	}
+
 	if err := u.userService.DeleteUser(id); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (u *UserUseCase) IsUserExists(username string) (user.IsExistsOutput, error) {
+	var output user.IsExistsOutput
+
+	exists, err := u.userService.IsUserExistsByUsername(username)
+	if err != nil {
+		return output, err
+	}
+
+	output = user.NewIsExistsOutput(exists)
+
+	return output, nil
+}
+
+func (u *UserUseCase) IsEmailExists(email string) (user.IsExistsOutput, error) {
+	var output user.IsExistsOutput
+
+	exists, err := u.userService.IsEmailExists(email)
+	if err != nil {
+		return output, err
+	}
+
+	output = user.NewIsExistsOutput(exists)
+
+	return output, nil
+}
+
+func (u *UserUseCase) UserCount() (user.CountOutput, error) {
+	var output user.CountOutput
+
+	count, err := u.userService.UserCount()
+	if err != nil {
+		return output, err
+	}
+
+	output = user.NewCountOutput(count)
+
+	return output, nil
 }

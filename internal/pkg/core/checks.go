@@ -1,6 +1,8 @@
 package core
 
-func IsMissingInput(fields ...string) bool {
+import "net/mail"
+
+func IsInputMissing(fields ...string) bool {
 	i := len(fields) - 1
 
 	for ; i > 0; i-- {
@@ -12,7 +14,7 @@ func IsMissingInput(fields ...string) bool {
 	return false
 }
 
-func IsInputLengthTooLong(lim int, fields ...string) bool {
+func IsInputExceeds(lim int, fields ...string) bool {
 	i := len(fields) - 1
 
 	for ; i > 0; i-- {
@@ -22,4 +24,10 @@ func IsInputLengthTooLong(lim int, fields ...string) bool {
 	}
 
 	return false
+}
+
+func IsEmailValid(email string) bool {
+	_, err := mail.ParseAddress(email)
+
+	return err == nil
 }

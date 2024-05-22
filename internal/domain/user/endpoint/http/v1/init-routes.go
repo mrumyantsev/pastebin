@@ -12,6 +12,10 @@ func (e *UserV1HttpEndpoint) InitRoutes(engine *gin.Engine) {
 			users.GET("/:id", e.GetUser)
 			users.PATCH("/:id", e.UpdateUser)
 			users.DELETE("/:id", e.DeleteUser)
+
+			users.GET("/is-exists/:username", e.IsUserExists)
+			users.GET("/is-email-exists/:email", e.IsEmailExists)
+			users.GET("/count", e.UserCount)
 		}
 	}
 }

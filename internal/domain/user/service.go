@@ -3,12 +3,14 @@ package user
 import "github.com/mrumyantsev/pastebin/internal/pkg/core"
 
 type UserService interface {
-	CreateUser(usr User) error
+	CreateUser(usr User) (int, error)
 	GetUsers(pg core.Pagination) ([]User, error)
 	GetUser(id int) (User, error)
 	UpdateUser(id int, usr User) error
 	DeleteUser(id int) error
 
-	IsUserExists(username string) (bool, error)
+	IsUserExistsByUsername(username string) (bool, error)
+	IsUserExistsById(id int) (bool, error)
 	IsEmailExists(email string) (bool, error)
+	UserCount() (int, error)
 }

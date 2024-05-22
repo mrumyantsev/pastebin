@@ -28,7 +28,7 @@ func Success(ctx *gin.Context, msg string) {
 	log.Info().Msg(msg)
 }
 
-func Object(ctx *gin.Context, msg string, obj interface{}) {
+func Object(ctx *gin.Context, obj any, msg string) {
 	ctx.JSON(http.StatusOK, obj)
 
 	log.Info().Msg(msg)

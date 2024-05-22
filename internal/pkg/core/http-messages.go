@@ -2,12 +2,19 @@ package core
 
 const (
 	MsgExists       = "exists"
+	MsgNotExists    = "notExists"
 	MsgEmailExists  = "emailExists"
-	MsgInputExceeds = "inputExceeds"
+	MsgEmailInvalid = "emailInvalid"
 	MsgInputMissing = "inputMissing"
+	MsgInputExceeds = "inputExceeds"
 
-	MsgCreated = "created"
-	MsgGet     = "get"
-	MsgUpdated = "updated"
-	MsgDeleted = "deleted"
+	MsgUserCreated = "user created"
+	MsgUsersGot    = "users got"
+	MsgUserGot     = "user got"
+	MsgUserUpdated = "user updated"
+	MsgUserDeleted = "user deleted"
+
+	MsgUserExistanceChecked  = "user existance checked"
+	MsgEmailExistanceChecked = "email existance checked"
+	MsgUserCountGot          = "user count got"
 )

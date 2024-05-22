@@ -39,14 +39,21 @@ run-fast:
 
 .PHONY: db
 db:
-	docker run -d \
+	docker run \
+	-d \
 	-e PGDATA=/data \
 	-e POSTGRES_USER=${DB_USERNAME} \
 	-e POSTGRES_PASSWORD=${DB_PASSWORD} \
 	-e POSTGRES_DB=${DB_DATABASE} \
 	-v ${DB_LOCAL_DIR}:/data \
 	-p ${DB_PORT}:${DB_PORT} \
+	--rm \
+	--name pastebin-db \
 	postgres:${POSTGRES_VER}-alpine${ALPINE_VER}
+
+.PHONY: db-stop
+db-stop:
+	docker stop pastebin-db
 
 .PHONY: swag
 swag:
