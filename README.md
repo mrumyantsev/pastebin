@@ -1,86 +1,86 @@
 # Pastebin
 
-Pastebin is a web application where anyone can store any text online for easy sharing.
+**Pastebin** - это веб-приложение, где каждый может хранить куски текста онлайн и делиться короткими ссылками на них.
 
-## Features
+## Основные фичи
 
-- The application can store text data up to 10 megabytes.
-- The shorl URL address will be generated for paste after saving.
-- When paste expires it will be removed automatically from the system.
+- Приложение может хранить текстовые куски объемом до 10 мегабайт.
+- После сохранения будет сгенерирован короткий URL-адрес для вставки.
+- По истечении срока действия текст будет автоматически удален из системы.
 
 ![Pastebin](./pastebin-web-ui.png)
-*Pastebin Web Interface*
+*Веб-интерфейс Pastebin*
 
-## Implementation
+## Реализация
 
-The maximum size a paste can be is 512 kilobytes (0.5 megabytes). This is should be enough for almost any piece of text or script, and it prevents people from jamming the backend servers. Loggined users can edit or delete anything they pasted and also allowed to create pastes up to 10 megabytes. Expired pastes will be removed permanently.
+Для неавторизованных пользователей максимальный размер текста - 512 килобайт. Этого должно быть достаточно практически для любого текста или скрипта, и это предотвращает перегрузку внутренних серверов. Авторизованные же пользователи могут добавлять, редактировать и удалять вставленный текст размером до 10 мегабайт. Куски текста с истекшим сроком действия будут удалены без возможности восстановления.
 
 ![Architecture](./pastebin-arch-diagram.png)
-*Pastebin Architecture Diagram*
+*Диаграмма архитектуры Pastebin*
 
-## Prerequisites
+## Системные требования
 
 - [Docker](https://docs.docker.com/desktop/linux/install/)
 
-## Usage
+## Применение
 
-Build the project with Docker Compose.
+Выполнить сборку проекта через Docker Compose.
 
 ```
 make
 ```
 
-Run the project with Docker Compose.
+Запустить собранный проект через Docker Compose.
 
 ```
 make run
 ```
 
-Build backend service locally (build the binary).
+Собрать локально backend-сервисы (создание исполняемых файлов).
 
 ```
 make build-local
 ```
 
-Run backend service locally (run the binary).
+Запустить локально собранные backend-сервисы (запуск исполняемых файлов).
 
 ```
 make run-local
 ```
 
-Run backend service in a temporary directory (fast).
+Сборка и запуск backend-сервисов во временных файлах (быстро).
 
 ```
 make run-fast
 ```
 
-## Testing
+## Тестирование
 
-Run all the unit-tests.
+Запустить все unit-тесты.
 
 ```
 make test
 ```
 
-Build a PostgreSQL container with Docker.
+Собрать контейнер PostgreSQL в Docker.
 
 ```
 make build-postgres-container
 ```
 
-Build a MongoDB container with Docker.
+Собрать контейнер MongoDB в Docker.
 
 ```
 make build-mongo-container
 ```
 
-Run a PostgreSQL container with Docker.
+Запустить контейнер PostgreSQL в Docker.
 
 ```
 make run-postgres-container
 ```
 
-Run a MongoDB container with Docker.
+Запустить контейнер MongoDB в Docker.
 
 ```
 make run-mongo-container
