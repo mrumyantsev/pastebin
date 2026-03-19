@@ -1,6 +1,44 @@
 version: '3.8'
 
 services:
+  web:
+    container_name: pb-web
+    hostname: pb-web
+    restart: unless-stopped
+    image: nginx:${NGINX_VERSION}-alpine${ALPINE_VERSION}
+    volumes:
+      - ${WEB_LOCAL_DIR}:/usr/share/nginx/html
+    networks:
+      - pb-external-network
+    ports:
+      - "${WEB_PORT}:80"
+    depends_on:
+      - server
+
+  server:
+    container_name: pb-server
+    hostname: pb-server
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        - GOLANG_VERSION=${GOLANG_VERSION}
+        - ALPINE_VERSION=${ALPINE_VERSION}
+        - APP_NAME=${SERVER_APP_NAME}
+    env_file:
+      - ./.env
+    networks:
+      - pb-internal-network
+      - pb-external-network
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+
   postgres:
     container_name: pb-postgres
     hostname: pb-postgres
@@ -16,7 +54,12 @@ services:
     networks:
       - pb-internal-network
     ports:
-      - ${POSTGRES_DATABASE_PORT}:5432
+      - "${POSTGRES_DATABASE_PORT}:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   mongo:
     container_name: pb-mongo
@@ -32,43 +75,13 @@ services:
     networks:
       - pb-internal-network
     ports:
-      - ${MONGO_DATABASE_PORT}:27017
-
-  server:
-    container_name: pb-server
-    hostname: pb-server
-    restart: unless-stopped
-    depends_on:
-      - postgres
-      - mongo
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      args:
-        - GOLANG_VERSION=${GOLANG_VERSION}
-        - ALPINE_VERSION=${ALPINE_VERSION}
-        - APP_NAME=${SERVER_APP_NAME}
-    env_file:
-      - ./.env
-    networks:
-      - pb-internal-network
-      - pb-external-network
-    ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
-
-  web:
-    container_name: pb-web
-    hostname: pb-web
-    restart: unless-stopped
-    depends_on:
-      - server
-    image: nginx:${NGINX_VERSION}-alpine${ALPINE_VERSION}
-    volumes:
-      - ${WEB_LOCAL_DIR}:/usr/share/nginx/html
-    networks:
-      - pb-external-network
-    ports:
-      - ${WEB_PORT}:80
+      - "${MONGO_DATABASE_PORT}:27017"
+    healthcheck:
+      test: [ "CMD", "mongosh", "--quiet", "localhost:27017/test", "--eval", "'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
 
 networks:
   pb-internal-network:
